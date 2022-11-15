@@ -1,0 +1,13 @@
+h1 {
+    mix-blend-mode:screen;
+    width: 100%;
+    padding:0;
+    background-color: #fff;
+    font-size: 100px;
+}
+
+.main {
+    &_title {
+        color: red;
+    }
+}
