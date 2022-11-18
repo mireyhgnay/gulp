@@ -13,7 +13,7 @@ var src = 'src';
 var dist = 'dist';
 var paths = {
     js : src + '/js/**/*.js',
-    scss : src + '/scss/*.scss',
+    scss : src + '/scss/**/*.scss',
     html : src + '/html/*.html'
 };
 
@@ -23,7 +23,7 @@ gulp.task('html', function() {
     return gulp
         .src(paths.html) // html 파일을 읽어오기 위해 경로 지정
         .pipe(gulp.dest(dist + '/html'))
-        .pipe(browserSync.reload({ stream : true })); // HTML 파일을 browserSync 로 브라우저에 반영
+        .pipe(browserSync.stream()); // HTML 파일을 browserSync 로 브라우저에 반영
 });
 
 
@@ -40,7 +40,7 @@ gulp.task('js:combine', function () {
         .pipe(uglify()) // 파일을 병합한 후 uglifiy를 수행한다.
         .pipe(rename({suffix : ".min"})) // min 네이밍으로 파일 생성
         .pipe(gulp.dest('dist/js')) // pipe 에 concat, uglify 을 수행한 후 rename 실행
-        .pipe(browserSync.reload({ stream : true })); // 스크립트 파일을 browserSync 로 브라우저에 반영
+        .pipe(browserSync.stream()); // 스크립트 파일을 browserSync 로 브라우저에 반영
 });
 
 
@@ -76,7 +76,7 @@ gulp.task('scss:compile', function() {
         .pipe(scss(scssOptions).on('error', scss.logError)) // SCSS 함수에 옵션값을 설정, SCSS작성시 watch가 멈추지 않도록 logError를 설정
         .pipe(sourcemaps.write()) // 위에서 생성한 소스맵을 사용한다.
         .pipe(gulp.dest(dist + '/css')) // 목적지(dist)를 설정
-        .pipe(browserSync.reload({ stream : true })); // SCSS 컴파일을 수행한 후 browserSync 로 브라우저에 반영
+        .pipe(browserSync.stream()); // SCSS 컴파일을 수행한 후 browserSync 로 브라우저에 반영
 });
 
 
@@ -88,7 +88,8 @@ gulp.task('browserSync', function() {
             baseDir : 'dist/',
             directory: true
         }
-    });
+    }),
+    gulp.watch("src/*").on("change", browserSync.reload)
 });
 
 
@@ -100,4 +101,4 @@ gulp.task('watch', function() {
 });
 
 // gulp 를 실행하면 default 로 js:combine task, scss:compile task 그리고 watch task 를 실행하도록 한다.
-gulp.task('default', gulp.series(['html','js:combine','scss:compile','browserSync','watch']));
+gulp.task('default', gulp.parallel(['html','js:combine','scss:compile','browserSync','watch']));
