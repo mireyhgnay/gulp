@@ -1,19 +1,21 @@
 // Modules 호출
-var gulp = require('gulp'); // Gulp 모듈 호출
+const gulp = require('gulp'); // Gulp 모듈 호출
 // gulp 플러그인 호출
-var concat = require('gulp-concat'); // concat 플러그인 호출
-var uglify = require('gulp-uglify'); // uglify 플러그인 호출
-var rename = require('gulp-rename'); // rename 플러그인 호출
-var sourcemaps = require('gulp-sourcemaps'); // sourcemaps 호출
-var scss = require("gulp-sass")(require('sass')); // sass 호출
-var browserSync = require('browser-sync').create(); // browser-sync 호출
+const concat = require('gulp-concat'); // concat 플러그인 호출
+const uglify = require('gulp-uglify'); // uglify 플러그인 호출
+const rename = require('gulp-rename'); // rename 플러그인 호출
+const sourcemaps = require('gulp-sourcemaps'); // sourcemaps 호출
+const scss = require("gulp-sass")(require('sass')); // sass 호출
+const browserSync = require('browser-sync').create(); // browser-sync 호출
+const fileinclude = require('gulp-file-include'); // gulp-file-include 호출
+const markdown = require('markdown'); // markdown 호출
 
 // Path 정의
-var src = 'src';
-var dist = 'dist';
-var paths = {
+const src = 'src';
+const dist = 'dist';
+const paths = {
     js : src + '/js/**/*.js',
-    scss : src + '/scss/**/*.scss',
+    scss : src + '/scss/*.scss',
     html : src + '/html/*.html'
 };
 
@@ -45,7 +47,7 @@ gulp.task('js:combine', function () {
 
 
 // ========== SCSS config(환경설정) ==========
-var scssOptions = {
+const scssOptions = {
     /*
         * CSS의 컴파일 결과 코드스타일 지정
         * Values : nested, expanded, compact, compressed
@@ -79,6 +81,20 @@ gulp.task('scss:compile', function() {
         .pipe(browserSync.stream()); // SCSS 컴파일을 수행한 후 browserSync 로 브라우저에 반영
 });
 
+gulp.task('fileinclude', function() {
+    return gulp.src([
+        "src/html/*", // 불러올 파일의 위치
+        "!" + "src/html/include/*" // 읽지 않고 패스할 파일의 위치
+    ])
+    .pipe(fileinclude({
+        prefix: '@@',
+        basepath: '@file',
+        filters: {
+            markdown: markdown.parse
+        }
+    }))
+    .pipe(gulp.dest('dist/html')); // 변환한 파일의 저장 위치 지정
+});
 
 // ========== @task : browserSync ==========
 gulp.task('browserSync', function() {
@@ -101,4 +117,4 @@ gulp.task('watch', function() {
 });
 
 // gulp 를 실행하면 default 로 js:combine task, scss:compile task 그리고 watch task 를 실행하도록 한다.
-gulp.task('default', gulp.parallel(['html','js:combine','scss:compile','browserSync','watch']));
+gulp.task('default', gulp.parallel(['html','js:combine','scss:compile','fileinclude','browserSync','watch']));
