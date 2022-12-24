@@ -1,6 +1,6 @@
 # 🥤Gulp Install!
 
-### 설치 방법 및 순서 내용을 [🔗블로그](https://hyerimiya.oopy.io/gulp/gulp-setting)에 정리해두었습니다.
+### 설치 방법 및 순서 내용을 [🔗노션](https://hyerimiya-main.notion.site/Gulp-3b388a6651ff47f49c30062101457917)에 정리해두었습니다.
 
 [기록]    
 221115 : 기본적으로 최소한의 셋팅까지 완료    
